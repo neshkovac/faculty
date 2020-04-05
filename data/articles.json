@@ -1,0 +1,37 @@
+[{
+    "id": 1,
+    "name": "Artikal1",
+    "priceUnder": 11,
+    "priceOver": 12
+  },
+  {
+    "id": 2,
+    "name": "Artikal2",
+    "priceUnder": 21,
+    "priceOver": 22
+  },
+  {
+    "id": 3,
+    "name": "Artikal3",
+    "priceUnder": 31,
+    "priceOver": 32
+  },
+  {
+    "id": 4,
+    "name": "Artikal4",
+    "priceUnder": 41,
+    "priceOver": 42
+  },
+  {
+    "id": 5,
+    "name": "Artikal5",
+    "priceUnder": 51,
+    "priceOver": 52
+  },
+  {
+    "id": 6,
+    "name": "Artikal6",
+    "priceUnder": 61,
+    "priceOver": 62
+  }
+]
