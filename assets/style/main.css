@@ -21,3 +21,11 @@ body {
 .cart-table {
   display: none;
 }
+
+.disabled {
+  disable: true;
+}
+
+.remove-from-articles {
+  display: none !important;
+}

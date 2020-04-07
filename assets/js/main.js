@@ -9,6 +9,7 @@ window.onload = function() {
 
 $productsCollumn = $('#productsCollumn');
 $cartWrapper = $('#showCart');
+$articles = [];
 
 // end of variables
 
@@ -26,7 +27,8 @@ function populateArticles(data) {
     result += `
         <div class="col-md-6 text-center single-article-wrapper">
           <h5 class="single-article-heading">${a.name}</h5>
-          <a class="btn btn-primary add-to-cart-btn" href="#" data-articleid="${a.id}">Add to cart</a>
+          <a class="btn btn-primary add-to-cart-btn" href="#" data-articleid="${a.id}">Add to cart</a><a class="btn btn-important remove-from-articles" href="#" data-removeid="${a.id}">-</a>
+
         </div> <!-- end of single article -->
     `
   });
@@ -38,7 +40,11 @@ function populateArticles(data) {
 
 function bindOnClick(e) {
   e.preventDefault();
-  console.log(e.target.dataset.articleid);
+  this.classList.add('disabled');
+  $articles.push(this.dataset.articleid);
+
+
+
 }
 
 function cartOnLoad() {
