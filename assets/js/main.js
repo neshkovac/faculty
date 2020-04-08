@@ -1,4 +1,4 @@
-window.onload = function() {
+window.onload = function () {
   articlesOnLoad();
   cartOnLoad();
 
@@ -15,7 +15,7 @@ $articles = [];
 
 
 function articlesOnLoad() {
-  $.get('data/articles.json', function(data) {
+  $.get('data/articles.json', function (data) {
     populateArticles(data);
   });
 }
@@ -42,19 +42,49 @@ function bindOnClick(e) {
   e.preventDefault();
   this.classList.add('disabled');
   $articles.push(this.dataset.articleid);
+  populateCartTable($articles);
 
 
 
 }
 
 function cartOnLoad() {
-  $cartWrapper.click(function() {
-      $('#cartTable').toggle(200, function(){
-        if ($('#showCart').html().trim() == "Show cart") {
-          $('#showCart').html("Hide cart");
-        } else {
-          $('#showCart').html("Show cart");
-        }
-      })
+  $cartWrapper.click(function () {
+    $('#cartTable').toggle(200, function () {
+      if ($('#showCart').html().trim() == "Show cart") {
+        $('#showCart').html("Hide cart");
+        populateCartTable($articles);
+      } else {
+        $('#showCart').html("Show cart");
+      }
     })
-  };
+  })
+};
+
+function populateCartTable(ids) {
+  let parsedIds = ids.map(function (x) {
+    return parseInt(x, 10);
+  });
+  var tempArr = [];
+  let result = ``;
+  let newData = [];
+  let itemsInDdl = `<select id="cartDdl" class="cart-ddl"><option value="default" selected>Choose article...</option>`;
+  $.get('data/articles.json', function (data) {
+    data.forEach((e, i) => {
+      tempArr = data.filter(function (item) {
+        return parsedIds.includes(item.id);
+      });
+    });
+    tempArr.forEach(e => {
+      itemsInDdl += `
+          <option data-cartitemid="${e.id}" class="cart-option" value="${e.name}">${e.name}</option>
+        `
+    })
+    itemsInDdl += `</select>`;
+    result += `<tr class="cart-ddl-row"><td>${itemsInDdl}</td><td><input type="text" 
+        placeholder="enter quantity" class="cart-ddl-input"></td></tr>
+        `
+    $('#cartBody').html(result);
+  })
+
+}
