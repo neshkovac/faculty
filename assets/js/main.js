@@ -51,7 +51,7 @@ function bindOnClick(e) {
 function cartOnLoad() {
   $cartWrapper.click(function () {
     $('#cartTable').toggle(200, function () {
-      if ($('#showCart').html().trim() == "Show cart") {
+      if ($('#showCart').html().trim() === "Show cart") {
         $('#showCart').html("Hide cart");
         populateCartTable($articles);
       } else {
@@ -59,13 +59,13 @@ function cartOnLoad() {
       }
     })
   })
-};
+}
 
 function populateCartTable(ids) {
   let parsedIds = ids.map(function (x) {
     return parseInt(x, 10);
   });
-  var tempArr = [];
+  let tempArr = [];
   let result = ``;
   let newData = [];
   let itemsInDdl = `<select id="cartDdl" class="cart-ddl"><option value="default" selected>Choose article...</option>`;
@@ -82,9 +82,34 @@ function populateCartTable(ids) {
     })
     itemsInDdl += `</select>`;
     result += `<tr class="cart-ddl-row"><td>${itemsInDdl}</td><td><input type="text" 
-        placeholder="enter quantity" class="cart-ddl-input"></td></tr>
+        placeholder="enter quantity" class="cart-ddl-input"></td><td><a href="#" class="btn btn-secondary" id="confirm-cart-item">Add</td></tr>
         `
     $('#cartBody').html(result);
+    $('a#confirm-cart-item').click(function (e) {
+      e.preventDefault();
+      cartDataCheck();
+    })
   })
-
 }
+
+function cartDataCheck() {
+
+  if (!$('input.cart-ddl-input').val() == "") {
+    var parsedQuantity = parseInt($('input.cart-ddl-input').val());
+  } else {
+    alert("Quantity must be numeric value!");
+  }
+
+  if (typeof(parsedQuantity) == 'number' && $('select#cartDdl option:selected')[0].index != 0) {
+    let inputVal = $('input.cart-ddl-input').val();
+    let selectedOptionHTML = $('select#cartDdl option:selected')[0].innerHTML;
+    populateSingleCartArticleRow(inputVal, selectedOptionHTML);
+  } else {
+    console.log("Failure!");
+    console.log($('input.cart-ddl-input').val());
+    console.log($('select#cartDdl'));
+  }
+}
+
+// populateSingleCartRow()
+
