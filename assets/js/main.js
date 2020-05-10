@@ -10,6 +10,8 @@ window.onload = function () {
 $productsCollumn = $('#productsCollumn');
 $cartWrapper = $('#showCart');
 $articles = [];
+var articles = [];
+var lastID = 0;
 
 // end of variables
 
@@ -58,6 +60,11 @@ function cartOnLoad() {
         $('#showCart').html("Show cart");
       }
     })
+    if(articles.length){
+      $('#articlesTable').toggle(200);
+    } else{
+      $('#articlesTable').setAttribute('display','table');
+    }
   })
 }
 
@@ -66,9 +73,13 @@ function populateCartTable(ids) {
     return parseInt(x, 10);
   });
   let tempArr = [];
-  let result = ``;
+  let result = ` <tr>
+                  <th>Products</th>
+                  <th>Quantity</th>
+                </tr>`;
   let newData = [];
-  let itemsInDdl = `<select id="cartDdl" class="cart-ddl"><option value="default" selected>Choose article...</option>`;
+  let itemsInDdl = `
+    <select id="cartDdl" class="cart-ddl"><option value="default" selected>Choose article...</option>`;
   $.get('data/articles.json', function (data) {
     data.forEach((e, i) => {
       tempArr = data.filter(function (item) {
@@ -77,7 +88,8 @@ function populateCartTable(ids) {
     });
     tempArr.forEach(e => {
       itemsInDdl += `
-          <option data-cartitemid="${e.id}" class="cart-option" value="${e.name}">${e.name}</option>
+          <option data-cartitemid="${e.id}" data-priceunder="${e.priceUnder}"
+          data-priceover="${e.priceOver}" class="cart-option" value="${e.name}">${e.name}</option>
         `
     })
     itemsInDdl += `</select>`;
@@ -94,7 +106,7 @@ function populateCartTable(ids) {
 
 function cartDataCheck() {
 
-  if (!$('input.cart-ddl-input').val() == "") {
+  if (!$('input.cart-ddl-input').val() == "" && !isNaN($('input.cart-ddl-input').val())) {
     var parsedQuantity = parseInt($('input.cart-ddl-input').val());
   } else {
     alert("Quantity must be numeric value!");
@@ -102,14 +114,64 @@ function cartDataCheck() {
 
   if (typeof(parsedQuantity) == 'number' && $('select#cartDdl option:selected')[0].index != 0) {
     let inputVal = $('input.cart-ddl-input').val();
-    let selectedOptionHTML = $('select#cartDdl option:selected')[0].innerHTML;
-    populateSingleCartArticleRow(inputVal, selectedOptionHTML);
+    let selectedOptionHTML = $('select#cartDdl option:selected')[0].dataset.cartitemid;
+    let selectedOptionPriceUnder = $('select#cartDdl option:selected')[0].dataset.priceunder;
+    let selectedOptionPriceOver = $('select#cartDdl option:selected')[0].dataset.priceover;
+    let selectedOptionName = $('select#cartDdl option:selected')[0].innerHTML;
+    console.log(selectedOptionHTML);
+    populateCartArticles(inputVal, selectedOptionHTML,selectedOptionPriceUnder,selectedOptionPriceOver,selectedOptionName);
   } else {
+    alert("Select article, please.");
     console.log("Failure!");
     console.log($('input.cart-ddl-input').val());
     console.log($('select#cartDdl'));
   }
 }
 
-// populateSingleCartRow()
+function populateCartArticles(quantity,id,priceUnder,priceOver,name){
+    if(parseInt(quantity,10) <= 10) {
+      let price = parseInt(priceUnder,10) * quantity;
+      articles.push({
+        "id": id,
+        "quantity": quantity,
+        "lastID": lastID,
+        "price": price,
+        "name" : name
+      });
+      lastID++;
+      displaySelectedArticles();
+    } else {
+      let price = parseInt(priceOver,10) * quantity;
+      articles.push({
+        "id": id,
+        "quantity": quantity,
+        "lastID": lastID,
+        "price": price,
+        "name" : name
+      });
+      lastID++;
+      displaySelectedArticles();
+    }
 
+    
+}
+
+function displaySelectedArticles(){
+  let result = ``;
+  articles.forEach((e,i) => {
+    result+=`
+      <tr><td>${++i}.</td><td>${e.name}</td><td>${e.price}</td><td><a class="btn btn-danger cart-item-btn"
+       href="#" onclick="removeFromCart(${e.lastID})">-</a></td></tr>
+    `
+  });
+  $('#articlesTable').html(result);
+}
+
+function removeFromCart(id){
+  articles.filter(x=> x.lastID == id);
+  articles.splice(0,1);
+  if(!articles.length){
+    lastID = 0;
+  }
+  displaySelectedArticles();
+}

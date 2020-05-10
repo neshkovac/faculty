@@ -24,3 +24,6 @@ body {
 .remove-from-articles {
   display: none !important;
 }
+table#cartTable, table#articlesTable{
+  width: 100%;
+}
