@@ -12,19 +12,19 @@ $cartWrapper = $('#showCart');
 $articles = [];
 var articles = [];
 var lastID = 0;
+var toggleDuration = "200";
 
 // end of variables
 
 
 function articlesOnLoad() {
-  $.get('data/articles.json', function (data) {
+  $.get('data/articles.json', function getArticlesData(data) {
     populateArticles(data);
   });
 }
 
 function populateArticles(data) {
-  var result = ``;
-
+  let result = '';
   data.forEach(a => {
     result += `
         <div class="col-md-6 text-center single-article-wrapper">
@@ -52,7 +52,7 @@ function bindOnClick(e) {
 
 function cartOnLoad() {
   $cartWrapper.click(function () {
-    $('#cartTable').toggle(200, function () {
+    $('#cartTable').toggle(toggleDuration, function () {
       if ($('#showCart').html().trim() === "Show cart") {
         $('#showCart').html("Hide cart");
         populateCartTable($articles);
@@ -61,7 +61,7 @@ function cartOnLoad() {
       }
     })
     if(articles.length){
-      $('#articlesTable').toggle(200);
+      $('#articlesTable').toggle(toggleDuration);
     } else{
       $('#articlesTable').setAttribute('display','table');
     }
@@ -77,7 +77,6 @@ function populateCartTable(ids) {
                   <th>Products</th>
                   <th>Quantity</th>
                 </tr>`;
-  let newData = [];
   let itemsInDdl = `
     <select id="cartDdl" class="cart-ddl"><option value="default" selected>Choose article...</option>`;
   $.get('data/articles.json', function (data) {
@@ -105,13 +104,12 @@ function populateCartTable(ids) {
 }
 
 function cartDataCheck() {
-
+  let parsedQuantity = parseInt($('input.cart-ddl-input').val());
   if (!$('input.cart-ddl-input').val() == "" && !isNaN($('input.cart-ddl-input').val())) {
-    var parsedQuantity = parseInt($('input.cart-ddl-input').val());
+
   } else {
     alert("Quantity must be numeric value!");
   }
-
   if (typeof(parsedQuantity) == 'number' && $('select#cartDdl option:selected')[0].index != 0) {
     let inputVal = $('input.cart-ddl-input').val();
     let selectedOptionHTML = $('select#cartDdl option:selected')[0].dataset.cartitemid;
@@ -155,7 +153,6 @@ function populateCartArticles(quantity,id,priceUnder,priceOver,name){
 
     
 }
-
 function displaySelectedArticles(){
   let result = ``;
   articles.forEach((e,i) => {
