@@ -21,6 +21,6 @@
   },
   "dependencies": {
     "gulp-uglifycss": "^1.1.0",
-    "terser": "^4.7.0"
+    "terser": "^4.8.1"
   }
 }
